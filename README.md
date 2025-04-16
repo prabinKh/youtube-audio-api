@@ -1,5 +1,23 @@
-# YouTube Audio Downloader
+<img width="1650" alt="Screenshot 2025-04-16 at 23 48 07" src="https://github.com/user-attachments/assets/b1e909f4-d718-4712-a775-66851828f848" />
 
+
+
+<img width="1668" alt="Screenshot 2025-04-16 at 23 50 55" src="https://github.com/user-attachments/assets/41a37141-9000-4cdd-b024-d6682dc6f60a" />
+
+
+
+
+<img width="1673" alt="Screenshot 2025-04-16 at 23 51 12" src="https://github.com/user-attachments/assets/9dd4f5c5-e101-46be-b621-df79878ce8a5" />
+
+<img width="1509" alt="Screenshot 2025-04-16 at 23 54 50" src="https://github.com/user-attachments/assets/67e3d979-b14f-49dd-b459-9819bb6f66e9" />
+
+<img width="1542" alt="Screenshot 2025-04-16 at 23 55 09" src="https://github.com/user-attachments/assets/5670852c-52c9-4fe9-ae40-1d07f0cc6ae6" />
+
+<img width="1499" alt="Screenshot 2025-04-16 at 23 55 19" src="https://github.com/user-attachments/assets/c86273a6-dbf3-4802-b810-c2706366c906" />
+
+<img width="1370" alt="Screenshot 2025-04-16 at 23 55 40" src="https://github.com/user-attachments/assets/e7f47c54-56ba-403b-a632-bd0f9b77a034" />
+
+# YouTube Audio Downloader
 A Django-based web application that automatically downloads audio from YouTube channels. The application monitors specified YouTube channels and downloads new audio content as it becomes available.
 
 ## Features
@@ -116,9 +134,7 @@ The application provides REST API endpoints for:
 4. Push to the branch
 5. Create a Pull Request
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
