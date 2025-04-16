@@ -20,9 +20,9 @@
     </div>
 
     <!-- Media Cards -->
-    {% if media_urls %}
+    {% if media_files %}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for media in media_urls %}
+            {% for media in media_files %}
             <div class="col">
                 <div class="card h-100 shadow-sm animate__card">
                     <div class="card-body d-flex flex-column">
@@ -36,34 +36,22 @@
                         </p>
 
                         <!-- Audio Section -->
-                        {% if media.downloaded_audio.exists %}
-                            <div class="audio-section mt-auto position-relative">
-                                <div class="dropdown-wrapper">
-                                    <button class="btn btn-sm btn-outline-success dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-headphones me-1"></i> {{ media.downloaded_audio.count }} Audio Files
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-custom">
-                                        {% for audio in media.downloaded_audio.all|dictsortreversed:"downloaded_at" %}
-                                        <li class="px-2 py-1">
-                                            <div class="d-flex flex-column">
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <span class="text-truncate audio-file-name"><i class="fas fa-file-audio me-1"></i> {{ audio.audio_file.name|cut:"audio/" }}</span>
-                                                    <small class="text-muted">{{ audio.downloaded_at|date:"M d, Y H:i" }}</small>
-                                                </div>
-                                                <audio controls class="w-100 mb-2">
-                                                    <source src="{{ audio.audio_file.url }}" type="audio/mpeg">
-                                                    Your browser does not support the audio element.
-                                                </audio>
-                                                <a href="{{ audio.audio_file.url }}" class="btn btn-sm btn-outline-secondary w-100" download>
-                                                    <i class="fas fa-download me-1"></i> Download
-                                                </a>
-                                            </div>
-                                        </li>
-                                        {% if not forloop.last %}
-                                            <li><hr class="dropdown-divider"></li>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </ul>
+                        {% if media.audio_file %}
+                            <div class="audio-section mt-auto">
+                                <div class="d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-truncate audio-file-name">
+                                            <i class="fas fa-file-audio me-1"></i> {{ media.audio_file.name|cut:"audio/" }}
+                                        </span>
+                                        <small class="text-muted">{{ media.downloaded_at|date:"M d, Y H:i" }}</small>
+                                    </div>
+                                    <audio controls class="w-100 mb-2">
+                                        <source src="{{ media.audio_file.url }}" type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <a href="{{ media.audio_file.url }}" class="btn btn-sm btn-outline-secondary w-100" download>
+                                        <i class="fas fa-download me-1"></i> Download
+                                    </a>
                                 </div>
                             </div>
                         {% else %}
@@ -91,6 +79,8 @@
 {% endblock %}
 
 {% block extra_css %}
+<!-- Include Animate.css for animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 <style>
     /* Card Animation */
     .animate__card {
@@ -128,7 +118,7 @@
         }
         to {
             opacity: 1;
-            transform: AscendingY(0);
+            transform: translateY(0);
         }
     }
     @keyframes fadeIn {
@@ -153,27 +143,6 @@
     }
     .audio-section {
         margin-top: auto;
-        position: relative;
-    }
-    .dropdown-wrapper {
-        position: relative;
-        width: 100%;
-    }
-    .dropdown-menu-custom {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        min-width: 100%;
-        width: auto;
-        max-height: 300px;
-        overflow-y: auto;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 5px;
-        padding: 10px;
-        z-index: 1000;
-        background-color: white;
     }
     .audio-file-name {
         max-width: 60%;
@@ -186,27 +155,5 @@
     audio {
         outline: none;
     }
-    .dropdown-toggle::after {
-        margin-left: 0.5rem;
-    }
 </style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropdowns = document.querySelectorAll('.dropdown-toggle');
-        dropdowns.forEach(dropdown => {
-            dropdown.addEventListener('click', function() {
-                setTimeout(() => {
-                    const items = this.nextElementSibling.querySelectorAll('li');
-                    items.forEach((item, index) => {
-                        item.style.animation = `fadeIn 0.3s ease-in-out ${index * 0.1}s`;
-                        item.style.animationFillMode = 'both';
-                    });
-                }, 10);
-            });
-        });
-    });
-</script>
 {% endblock %}

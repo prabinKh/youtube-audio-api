@@ -1,29 +1,23 @@
 from django.contrib import admin
-from .models import YouTubeChannel, MediaURL, DownloadedAudio
+from .models import YouTubeChannel, MediaFile
 
-
-class DownloadedAudioInline(admin.TabularInline):
-    model = DownloadedAudio
+class MediaFileInline(admin.TabularInline):
+    model = MediaFile
     extra = 0
-
-
-class MediaURLInline(admin.TabularInline):
-    model = MediaURL
-    extra = 0
-
+    fields = ('media_url', 'audio_file', 'downloaded_at')
+    readonly_fields = ('downloaded_at',)
 
 @admin.register(YouTubeChannel)
 class YouTubeChannelAdmin(admin.ModelAdmin):
-    list_display = ('name', 'channel_id', 'url', 'created_at')
-    inlines = [MediaURLInline]
+    list_display = ('name', 'channel_id', 'created_at')
+    search_fields = ('name', 'channel_id')
+    inlines = [MediaFileInline]
 
-
-@admin.register(MediaURL)
-class MediaURLAdmin(admin.ModelAdmin):
-    list_display = ('media_url', 'youtube_channel', 'created_at')
-    inlines = [DownloadedAudioInline]
-
-
-@admin.register(DownloadedAudio)
-class DownloadedAudioAdmin(admin.ModelAdmin):
-    list_display = ('media_url', 'audio_file', 'downloaded_at')
+@admin.register(MediaFile)
+class MediaFileAdmin(admin.ModelAdmin):
+    list_display = ('media_url', 'youtube_channel', 'has_audio', 'created_at')
+    list_filter = ('youtube_channel', 'downloaded_at')
+    
+    def has_audio(self, obj):
+        return bool(obj.audio_file)
+    has_audio.boolean = True

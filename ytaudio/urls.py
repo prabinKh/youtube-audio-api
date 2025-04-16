@@ -6,7 +6,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('downloader.urls')),  # Root routes go to the downloader app
-    # path('api/', include('downloader.apiurls')),
 ]
 
 # Serve media and static files in development

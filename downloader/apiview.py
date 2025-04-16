@@ -1,8 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from .models import MediaURL, DownloadedAudio, YouTubeChannel
-from .serialization import MediaURLSerializer, DownloadedAudioSerializer, YouTubeChannelSerializer  # Updated import
+from .models import MediaFile, YouTubeChannel
+from .serialization import MediaFileSerializer, YouTubeChannelSerializer
 from .utils import fetch_and_save_media_urls, check_and_update_media_urls, download_audio
 
 class YouTubeChannelCreateAPIView(generics.CreateAPIView):
@@ -13,25 +12,23 @@ class YouTubeChannelCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         channel = serializer.save()
         fetch_and_save_media_urls(channel)
-        check_and_update_media_urls(repeat=60)  # Every minute
-        download_audio(repeat=300)  # Every 5 minutes
+        check_and_update_media_urls(repeat=60)
+        download_audio(repeat=300)
 
-class MediaURLListCreateAPIView(generics.ListCreateAPIView):
-    queryset = MediaURL.objects.all()
-    serializer_class = MediaURLSerializer
+class ChannelListAPIView(generics.ListAPIView):
+    queryset = YouTubeChannel.objects.all()
+    serializer_class = YouTubeChannelSerializer
     permission_classes = [IsAuthenticated]
 
-class MediaURLDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = MediaURL.objects.all()
-    serializer_class = MediaURLSerializer
+class MediaFileListAPIView(generics.ListAPIView):
+    serializer_class = MediaFileSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        channel_id = self.kwargs.get('channel_id')
+        return MediaFile.objects.filter(youtube_channel_id=channel_id)
 
-class DownloadedAudioListAPIView(generics.ListAPIView):
-    queryset = DownloadedAudio.objects.all()
-    serializer_class = DownloadedAudioSerializer
-    permission_classes = [IsAuthenticated]
-
-class DownloadedAudioDetailAPIView(generics.RetrieveAPIView):
-    queryset = DownloadedAudio.objects.all()
-    serializer_class = DownloadedAudioSerializer
+class AudioFileListAPIView(generics.ListAPIView):
+    queryset = MediaFile.objects.exclude(audio_file='')
+    serializer_class = MediaFileSerializer
     permission_classes = [IsAuthenticated]

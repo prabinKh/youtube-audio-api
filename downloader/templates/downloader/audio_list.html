@@ -29,7 +29,7 @@
 
   /* Audio Row */
   .audio-row {
-    background:rgb(45, 129, 214);
+    background: rgb(45, 129, 214);
     border-radius: 8px;
     margin-bottom: 1rem;
     padding: 1rem;
@@ -75,7 +75,7 @@
   .audio-progress {
     height: 6px;
     flex-grow: 1;
-    background:rgb(25, 62, 100);
+    background: rgb(25, 62, 100);
     border-radius: 3px;
     overflow: hidden;
     cursor: pointer;
@@ -140,7 +140,7 @@
 
   /* Table Header */
   .table-header {
-    background: var(--secondary-color);
+    background: embraces;
     color: white;
   }
 
@@ -200,7 +200,7 @@
                 <td>
                   <span class="audio-name">{{ audio.audio_file.name|cut:"audio/" }}</span>
                 </td>
-                <td>{{ audio.media_url.youtube_channel.name }}</td>
+                <td>{{ audio.youtube_channel.name }}</td>
                 <td>
                   <div class="audio-controls">
                     <button class="play-btn" data-audio-id="{{ audio.id }}">
@@ -214,15 +214,15 @@
                 </td>
                 <td>{{ audio.downloaded_at|date:"M d, Y H:i" }}</td>
                 <td>
-                  <a href="{{ audio.media_url.media_url }}" target="_blank" class="url-link text-truncate d-inline-block" style="max-width: 200px;">
-                    {{ audio.media_url.media_url }}
+                  <a href="{{ audio.media_url }}" target="_blank" class="url-link text-truncate d-inline-block" style="max-width: 200px;">
+                    {{ audio.media_url }}
                   </a>
                 </td>
                 <td class="text-center">
                   <a href="{{ audio.audio_file.url }}" class="btn btn-sm download-btn-list" download>
                     <i class="fas fa-download me-1"></i>Download
                   </a>
-                  <a href="{% url 'media_list' audio.media_url.youtube_channel.id %}" class="btn btn-sm btn-outline-secondary">
+                  <a href="{% url 'media_list' audio.youtube_channel.id %}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-film me-1"></i>View Channel
                   </a>
                 </td>

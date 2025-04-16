@@ -1,10 +1,15 @@
-<!-- templates/video_downloader/login.html -->
 {% extends 'base.html' %}
 
 {% block title %}Login - Audio Downloader{% endblock %}
 
 {% block extra_css %}
+<!-- Include Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 <style>
+  :root {
+    --primary-color: #4361ee; /* Define for consistency */
+  }
+
   .login-container {
     position: relative;
     z-index: 1;
@@ -111,27 +116,34 @@
         <div class="mb-4">
           <i class="fas fa-user-circle login-icon"></i>
         </div>
-        
+
+        <!-- Display Django messages -->
+        {% if messages %}
+          <div class="mb-3">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} animate__animated animate__fadeIn">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <form method="post" id="loginForm">
           {% csrf_token %}
           
-          {% if form.errors %}
-          <div class="alert alert-danger animate__animated animate__shakeX">
-            <i class="fas fa-exclamation-circle me-2"></i>
-            Your username and password didn't match. Please try again.
-          </div>
-          {% endif %}
-          
+          <!-- Username Field -->
           <div class="mb-4">
             <div class="input-group">
               <span class="input-group-text bg-transparent">
                 <i class="fas fa-user text-primary"></i>
               </span>
               <input type="text" name="username" id="id_username" class="form-control form-control-lg" 
-                     placeholder="Username" required>
+                     placeholder="Username" required autofocus>
             </div>
           </div>
           
+          <!-- Password Field -->
           <div class="mb-4">
             <div class="input-group">
               <span class="input-group-text bg-transparent">
@@ -145,6 +157,7 @@
             </div>
           </div>
           
+          <!-- Submit Button -->
           <button type="submit" class="btn btn-primary btn-lg w-100 login-btn">
             <i class="fas fa-sign-in-alt me-2"></i>Login
           </button>
@@ -167,15 +180,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordField.setAttribute('type', type);
       
-      // Change the icon
       const icon = this.querySelector('i');
-      if (type === 'password') {
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-      } else {
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-      }
+      icon.classList.toggle('fa-eye', type === 'password');
+      icon.classList.toggle('fa-eye-slash', type === 'text');
     });
   }
   
@@ -183,9 +190,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const formInputs = document.querySelectorAll('.form-control');
   formInputs.forEach(input => {
     input.addEventListener('focus', function() {
-      this.closest('.input-group').classList.add('animate__animated', 'animate__pulse');
+      const inputGroup = this.closest('.input-group');
+      inputGroup.classList.add('animate__animated', 'animate__pulse');
       setTimeout(() => {
-        this.closest('.input-group').classList.remove('animate__animated', 'animate__pulse');
+        inputGroup.classList.remove('animate__animated', 'animate__pulse');
       }, 1000);
     });
   });

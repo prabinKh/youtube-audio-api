@@ -1,18 +1,15 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import logout  
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import YouTubeChannel, MediaURL, DownloadedAudio
+from .models import YouTubeChannel, MediaFile
 from .forms import YouTubeChannelForm
 from .utils import fetch_and_save_media_urls, check_and_update_media_urls, download_audio
-from django.contrib.auth import logout
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
 
 def custom_logout_view(request):
-    logout(request)
+    logout(request)  
     messages.success(request, "You have been successfully logged out.")
     return redirect('login')
-
 @login_required
 def channel_list(request):
     channels = YouTubeChannel.objects.all()
@@ -26,9 +23,9 @@ def add_channel(request):
             channel = form.save()
             fetch_and_save_media_urls(channel)
             
-            # Schedule background tasks if they're not already scheduled
-            check_and_update_media_urls(repeat=60)  # Schedule to run every minute
-            download_audio(repeat=300)  # Schedule to run every 5 minutes
+            # Schedule background tasks
+            check_and_update_media_urls(repeat=60)  # Every minute
+            download_audio(repeat=300)  # Every 5 minutes
             
             return redirect('channel_list') 
     else:
@@ -38,15 +35,15 @@ def add_channel(request):
 @login_required
 def media_list(request, channel_id):
     channel = YouTubeChannel.objects.get(id=channel_id)
-    media_urls = channel.media_urls.all()
+    media_files = channel.media_files.all()
     return render(request, 'downloader/media_list.html', {
         'channel': channel,
-        'media_urls': media_urls
+        'media_files': media_files
     })
 
 @login_required
 def audio_list(request):
-    audio_files = DownloadedAudio.objects.all().order_by('-downloaded_at')
+    audio_files = MediaFile.objects.exclude(audio_file='').order_by('-downloaded_at')
     return render(request, 'downloader/audio_list.html', {
         'audio_files': audio_files
     })

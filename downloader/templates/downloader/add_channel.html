@@ -4,26 +4,40 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <a href="{% url 'channel_list' %}" class="back-link">
+    <div class="col-12 col-md-8">
+        <a href="{% url 'channel_list' %}" class="back-link mb-3 d-inline-block">
             <i class="fas fa-arrow-left me-1"></i> Back to Channels
         </a>
         
         <div class="add-form">
-            <h2 class="text-center mb-4"><i class="fab fa-youtube me-2"></i>Add YouTube Channel</h2>
+            <h2 class="text-center mb-4">
+                <i class="fab fa-youtube me-2"></i>Add YouTube Channel
+            </h2>
             
-            <form method="post">
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.non_field_errors|join:", " }}
+                </div>
+            {% endif %}
+            
+            <form method="post" novalidate>
                 {% csrf_token %}
                 
                 {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    {{ field.errors }}
-                    {{ field }}  <!-- No add_class filter; JS handles the styling -->
-                    {% if field.help_text %}
-                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                    {% endif %}
-                </div>
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ field.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                    </div>
                 {% endfor %}
                 
                 <div class="d-grid gap-2 mt-4">
@@ -37,13 +51,43 @@
 </div>
 {% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Ensure form inputs have Bootstrap styling */
+    .form-control {
+        border-radius: 6px;
+        transition: border-color 0.2s ease;
+    }
+    /* Style invalid fields */
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+    /* Adjust label styling */
+    .form-label {
+        color: var(--secondary-color);
+    }
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .add-form {
+            padding: 1rem;
+        }
+        .btn-primary {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block extra_js %}
 <script>
-    // Adds the 'form-control' class to all form fields
+    // Add Bootstrap classes and validation dynamically
     document.addEventListener('DOMContentLoaded', function() {
-        const formInputs = document.querySelectorAll('input, select, textarea');
+        const formInputs = document.querySelectorAll('input:not([type="checkbox"]), select, textarea');
         formInputs.forEach(input => {
             input.classList.add('form-control');
+            if (input.closest('.mb-3').querySelector('.invalid-feedback')) {
+                input.classList.add('is-invalid');
+            }
         });
     });
 </script>
